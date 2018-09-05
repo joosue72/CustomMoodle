@@ -8,6 +8,7 @@ package edu.salle.custommoodle.view;
 import edu.salle.custommoodle.businesslogic.StudentBLO;
 import edu.salle.custommoodle.model.Student;
 import java.util.List;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -20,6 +21,7 @@ public class StudentWindow extends javax.swing.JFrame {
     public StudentWindow() {
         initComponents();
         setLocationRelativeTo(null);
+        studentBLO.load();
     }
 
     /**
@@ -46,6 +48,7 @@ public class StudentWindow extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         tStudents = new javax.swing.JTable();
         bRefresh = new javax.swing.JButton();
+        bExit = new javax.swing.JButton();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -117,6 +120,14 @@ public class StudentWindow extends javax.swing.JFrame {
         });
         getContentPane().add(bRefresh, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 210, -1, -1));
 
+        bExit.setText("Salir");
+        bExit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bExitActionPerformed(evt);
+            }
+        });
+        getContentPane().add(bExit, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 120, -1, -1));
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -130,14 +141,26 @@ public class StudentWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_bSaveActionPerformed
 
     private void bSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSearchActionPerformed
-        // TODO add your handling code here:
-        String id = fID.getText();
-        Student student = studentBLO.find(id);
-        if(student!=null)
-        {
-            tfName.setText(student.getName());
-            tfLastName.setText(student.getLastName());
-        }
+//        // TODO add your handling code here:
+//        String id = fID.getText();
+//        Student student = studentBLO.find(id);
+//        if(student!=null)
+//        {
+//            tfName.setText(student.getName());
+//            tfLastName.setText(student.getLastName());
+//        }
+
+    String lastName = tfLastName.getText().trim();
+    if(!lastName.isEmpty()){
+    List<Student> studentList = studentBLO.findByLastName(lastName);
+    if(!studentList.isEmpty())
+    {
+        refreshTable(studentList);
+    }
+    else{
+        JOptionPane.showMessageDialog(null,"You need to fill the last name");
+    }
+    }
     }//GEN-LAST:event_bSearchActionPerformed
 
     private void clearTable()
@@ -149,10 +172,9 @@ public class StudentWindow extends javax.swing.JFrame {
         }
     }
     
-    private void refreshTable()
+    private void refreshTable(List<Student> studentList)
     {
         clearTable();
-        List<Student> studentList = studentBLO.findAll();
         DefaultTableModel dtm = (DefaultTableModel) tStudents.getModel();
         Object[] emptyRow = {""};
         
@@ -167,13 +189,19 @@ public class StudentWindow extends javax.swing.JFrame {
     }
     
     private void bRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bRefreshActionPerformed
-        refreshTable();
+        refreshTable(studentBLO.findAll());
     }//GEN-LAST:event_bRefreshActionPerformed
+
+    private void bExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bExitActionPerformed
+      studentBLO.commitChanges();
+      this.dispose();
+    }//GEN-LAST:event_bExitActionPerformed
 
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bDelete;
+    private javax.swing.JButton bExit;
     private javax.swing.JButton bRefresh;
     private javax.swing.JButton bSave;
     private javax.swing.JButton bSearch;

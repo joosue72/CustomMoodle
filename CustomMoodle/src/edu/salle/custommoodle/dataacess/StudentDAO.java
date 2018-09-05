@@ -20,10 +20,14 @@ public interface StudentDAO {
     
     public Student find(String id);
     
-    public Student findByLastName(String LastName);
+    public List<Student> findByLastName(String LastName);
     
     public void delete(Student student);
     
     public void update(Student student);
+    
+    public void load();
+    
+    public void commitChanges();
     
 }
